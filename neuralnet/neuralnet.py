@@ -2,67 +2,41 @@
 
 # Imports
 import tensorflow as tf
-import math
+import scipy as sc
+from scipy.io import wavfile as wav
+import numpy as np
+import matplotlib.pyplot as plt
+import python_speech_features as psf
+import filetype
 
+tf.logging.set_verbosity(tf.logging.INFO)
 
-# Get input data
-# Currently using MNIST data as a placeholder, will replace at a later time.
-from tensorflow.examples.tutorials.mnist import input_data
-mnist = input_data.read_data_sets("tmp/data", one_hot=True)
-
-# Consts
-NUM_CLASSES = 10
-IMAGE_SIZE = 28
-IMAGE_PIXELS = IMAGE_SIZE * IMAGE_SIZE
-
-def model(data,*layers):
+def genX(filename, windowSize=40):
 	"""
-	Defining the Neural Net Model, to be run at a later time.
-
-	Args:
-		data: Input data to first layer
-		*layers: Layers, @Int size of layer.
-				First is input (with appropriate data to match),
-				last is output (should be `NUM_CLASSES`),
-				and the rest in-between are hidden layers.
-
-	Returns:
-		data: Output tensor computed through neural net
+	Given audio filename as .mp3 or .wav, generates a set of MFCC in a 1d array
+	Params:
+		filename - Type {@filetype.guess(filename)}
+	Return:
+		myFeatures - Type list
 	"""
-	before = IMAGE_PIXELS
+	rate, data = wav.read(filename)
+	# print(rate, len(data))
+	myFeatures = np.transpose(psf.mfcc(data, rate, nfft=1200))
+	plt.imshow(myFeatures, aspect=10, interpolation='none')
+	plt.savefig('py.png')
+	myFeatures = myFeatures.flatten
+	# print(len(myFeatures))
+	return myFeatures
 
-	# Loop through, making layers and initialize
-	for i in range(len(layers)-1):
-		with tf.name_scope('hidden'+(i+1)):
-			weights = tf.Variable(
-				initial_value = tf.truncated_normal(
-					[ before, layers[i] ],
-					stddev = 1.0 / math.sqrt(float(IMAGE_PIXELS)) # TODO: Figure this out
-					),
-				name = 'weights'
-			)
-			biases = tf.Variable(
-				initial_value = tf.zeros([layers[i]]),
-				name = 'biases'
-			)
-			data = tf.nn.relu(tf.matmul(data, weights) + biases)
-		# Set this for next iteration to save data
-		before = layers[i]
-	
-	# Output layer - special
-	with tf.name_scope('softmax_linear'):
-		weights = tf.Variable(
-			initial_value = tf.truncated_normal(
-				[ before, layers[i] ],
-				stddev = 1.0 / math.sqrt(float(IMAGE_PIXELS)) # TODO: Figure this out
-				),
-			name = 'weights'
-		)
-		biases = tf.Variable(
-			initial_value = tf.zeros([layers[i]]),
-			name = 'biases'
-		)
-		data = tf.matmul(data, weights) + biases # No ReLU applied here
+def input_fn_train: # returns x, y
+	#
+def input_fn_eval: # returns x, y
+	pass
 
-	# Return
-	return data
+estimator = tf.estimator.Estimator()
+
+estimator.train(input_fn=input_fn_train)
+estimator.evaluate(input_fn=input_fn_eval)
+
+# Predictions
+estimator.predict(input_fn=input_fn_predict)
