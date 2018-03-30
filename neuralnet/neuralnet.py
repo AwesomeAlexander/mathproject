@@ -8,14 +8,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 import python_speech_features as psf
 import filetype
+import os
 
 tf.logging.set_verbosity(tf.logging.INFO)
 
-def genX(filename, windowSize=40):
+def generate_features(filename, windowSize=40):
 	"""
 	Given audio filename as .mp3 or .wav, generates a set of MFCC in a 1d array
 	Params:
 		filename - Type {@filetype.guess(filename)}
+		windowSize
 	Return:
 		myFeatures - Type list
 	"""
@@ -28,9 +30,18 @@ def genX(filename, windowSize=40):
 	# print(len(myFeatures))
 	return myFeatures
 
-def input_fn_train: # returns x, y
-	#
-def input_fn_eval: # returns x, y
+def get_data(datafile="data"):
+	# Hardcode in to data file
+	for file in os.listdir(os.fsencode(datafile)):
+		filename = os.fsdecode(file)
+		if filename.endswith(".wav"): 
+			# Found a .wav file
+			pass
+	return None
+
+def input_fn_train(): # returns x, y
+	pass
+def input_fn_eval(): # returns x, y
 	pass
 
 estimator = tf.estimator.Estimator()
