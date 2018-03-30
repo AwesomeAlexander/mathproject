@@ -19,5 +19,5 @@ def func(filename, windowSize=40):
     return myFeatures
 
 while True:
-	filename = input("What file?")
+	filename = input("What file?\n")
 	func(filename)
