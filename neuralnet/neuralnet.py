@@ -35,9 +35,9 @@ def get_data(datafile="data"):
 	for file in os.listdir(os.fsencode(datafile)):
 		filename = os.fsdecode(file)
 		if filename.endswith(".wav"): 
-			# Found a .wav file
-			pass
-	return None
+			filename = filename[:4]
+		
+	return x,y
 
 def input_fn_train(): # returns x, y
 	pass
